@@ -39,35 +39,31 @@ public class PersonList : DBBase
     public InputField homeTown;
 
     public Text dbText;
+    public Text tagText;
 
     public List<Person> people;
 
-    /// <summary>
     /// massive list of necessary keys database side for people generation
-    /// </summary>
 
     //create string constants for each table (messy for the moment), naming convention: <tableName> <TableName>/<Key><KeyName>
     private const string peopleTableName = "People";
     private const string peopleKeyPersonID = "Person_ID";
     private const string peopleKeyLastName = "Last_Name";
     private const string peopleKeyFirstName = "First_Name";
+    private const string peopleKeyOccupation = "Occupation";
     private const string peopleKeyTown = "HomeTown";
-    ///just so you remember how its sorted on the database side! (provided the table is complex at all)
-    private string[] peopleColumns = new string[] { peopleKeyPersonID, peopleKeyLastName, peopleKeyFirstName, peopleKeyTown };
+    //just so you remember how its sorted on the database side! (provided the table is complex at all)
+    private string[] peopleColumns = new string[] { peopleKeyPersonID, peopleKeyLastName, peopleKeyFirstName, peopleKeyTown, peopleKeyOccupation };
 
 
     //dont define these yet since you have the UI to generate them for you, but leave them here when we switch to DB integration
+
     //possible first names
     private const string firstNameTableName = "FirstNames";
-    ///just ids and values
-
     //possible last names
     private const string lastNameTableName = "LastNames";
-    ///just ids and values
-
     //possible hometowns
     private const string homeTownTableName = "HomeTowns";
-    ///just ids and values
 
     //possible occupations
     private const string occupationTableName = "Occupations";
@@ -85,7 +81,10 @@ public class PersonList : DBBase
     private const string personTagTableName = "PersonTags";
     private const string personTagKeyPersonID = "PersonID";
     private const string personTagKeyTagID = "TagID";
-    private string[] tagColumns = new string[] { personTagKeyPersonID, personTagKeyTagID };
+    private string[] personTagColumns = new string[] { personTagKeyPersonID, personTagKeyTagID };
+
+
+
 
     public PersonList() : base()
     {
@@ -97,7 +96,7 @@ public class PersonList : DBBase
     {
         //List<Person> people = new List<Person>();
         //base.Start();
-        Debug.Log("child start");
+        //Debug.Log("child start");
 
         string connectionString = "URI=file:" + Application.persistentDataPath + "/Data/" + base.name + ".db";
         //open connection
@@ -111,36 +110,37 @@ public class PersonList : DBBase
             + " ( " + peopleKeyPersonID + "TEXT PRIMARY KEY, "
             + peopleKeyLastName + " TEXT, "
             + peopleKeyFirstName + " TEXT, "
-            + peopleKeyTown + " TEXT )";
+            + peopleKeyTown + " TEXT, "
+            + peopleKeyOccupation + " TEXT )";
 
         createPeopleCmd.ExecuteNonQuery();
 
-        //create occupation table
-        IDbCommand createOccCmd = CreateDBCommand();
-
-        createOccCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + occupationTableName
-            + " ( " + occKeyID + "INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + occKeyOccupation + " TEXT )";
-
-        createOccCmd.ExecuteNonQuery();
+        //create occupation table - do this later once you know it works
+        //IDbCommand createOccCmd = CreateDBCommand();
+        //
+        //createOccCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + occupationTableName
+        //    + " ( " + occKeyID + "INTEGER PRIMARY KEY AUTOINCREMENT, "
+        //    + occKeyOccupation + " TEXT )";
+        //
+        //createOccCmd.ExecuteNonQuery();
 
         //create tags table
         IDbCommand createTagCmd = CreateDBCommand();
 
         createTagCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + tagTableName
-            + " ( " + occKeyID + "INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + occKeyOccupation + " TEXT )";
+            + " ( " + tagKeyID + "INTEGER PRIMARY KEY, "
+            + tagKeyDesc + " TEXT )";
 
         createTagCmd.ExecuteNonQuery();
 
-        //create person table
-        IDbCommand createTagCmd = CreateDBCommand();
+        //create person tag table
+        IDbCommand createPersonTagCmd = CreateDBCommand();
 
-        createTagCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + personTagTableName
-            + " ( " + occKeyID + "INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + occKeyOccupation + " INTEGER )";
+        createPersonTagCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + personTagTableName
+            + " ( " + personTagKeyPersonID + "INTEGER PRIMARY KEY, "
+            + personTagKeyTagID + " INTEGER )";
 
-        createTagCmd.ExecuteNonQuery();
+        createPersonTagCmd.ExecuteNonQuery();
 
         //get current people list from DB
         RequestPeopleList();
@@ -183,7 +183,7 @@ public class PersonList : DBBase
         return dataReader;
     }
 
-    //CURD create update request delete
+    //database fundies - CURD = create update request delete
 
     //functions for DB interaction
     void CreateAndAddPerson(Person person)
@@ -196,23 +196,39 @@ public class PersonList : DBBase
             + peopleKeyPersonID + ", "
             + peopleKeyLastName + ", "
             + peopleKeyFirstName + ", "
-            + peopleKeyTown + " ) "
+            + peopleKeyTown + ", "
+            + peopleKeyOccupation + " ) "
 
             + "VALUES ( '"
             + person.personID + "', '"
             + person.lastName + "', '"
             + person.firstName + "', '"
-            + person.homeTown + "' )";
+            + person.firstName + "', '"
+            + person.occupation + "' )";
 
         addCmd.ExecuteNonQuery();
 
         //add person to local list
         //people.Add(person);
 
+        //put persons tags in relevant table with player ID
+        IDbCommand addTagCmd = base.CreateDBCommand();
 
+        for (int i = 0; i < person.tags.Count; ++i)
+        {
+            addTagCmd.CommandText =
+            "INSERT INTO " + personTagTableName + " ( "
+            + personTagKeyPersonID + ", "
+            + personTagKeyTagID + " ) "
 
-        //create tags for that persons ID in person tag
+            + "VALUES ( '"
+            + person.personID + "', '"
+            + person.tags[i] + "' )";
 
+            Debug.Log(person.tags[i]);
+
+            addTagCmd.ExecuteNonQuery();
+        }
 
         //create hunger / sickness stats for that person??
 
@@ -242,11 +258,18 @@ public class PersonList : DBBase
         //create new person from saved text fields, randomly generate an ID number
         Person newPerson;
 
-        //pick random tags and add them to player
-        List<string> newTags;
+        //pick random occupation and 2 tags and add them to player
 
+        string newOccupation;
+        List<string> newTags = new List<string>();
 
-        newPerson = new Person(Random.Range(1111, 9999).ToString(), lastName.text, firstName.text, homeTown.text);
+        newOccupation = ConstructorValues.occupations[Random.Range(0, ConstructorValues.occupations.Length)];
+
+        //pick two random tags
+        newTags.Add(ConstructorValues.tags[Random.Range(0, ConstructorValues.tags.Length)]);
+        newTags.Add(ConstructorValues.tags[Random.Range(0, ConstructorValues.tags.Length)]);
+
+        newPerson = new Person(Random.Range(1111, 9999).ToString(), lastName.text, firstName.text, homeTown.text, newOccupation, newTags);
 
         CreateAndAddPerson(newPerson);
 
@@ -269,13 +292,13 @@ public class PersonList : DBBase
         //get list of people so you can display it in ui
         //do formatting in here, dont spend much time modifying UI
 
-        IDataReader tableReader = GetDataFromTable(peopleTableName);
+        IDataReader peopleTableReader = GetDataFromTable(peopleTableName);
 
         dbText.text = "";
 
         string tmp;
 
-        while (tableReader.Read())
+        while (peopleTableReader.Read())
         {
             //DEBUUUUUG
             //Debug.Log("id: "    + tableReader[0].ToString());
@@ -283,13 +306,35 @@ public class PersonList : DBBase
             //Debug.Log("first: " + tableReader[2].ToString());
             //Debug.Log("town: "  + tableReader[3].ToString());
 
-            tmp = tableReader[0].ToString() + "   " +
-                tableReader[1].ToString() + "   " +
-                tableReader[2].ToString() + "   " +
-                tableReader[3].ToString() + "   ";
+            tmp = peopleTableReader[0].ToString() + "   " +
+                peopleTableReader[1].ToString() + "   " +
+                peopleTableReader[2].ToString() + "   " +
+                peopleTableReader[3].ToString() + "   ";
+                peopleTableReader[4].ToString();
 
             dbText.text = dbText.text + "\n" + tmp;
         }
+
+        IDataReader tagTableReader = GetDataFromTable(tagTableName);
+       
+        //read tags
+        tagText.text = "";
+
+        while (tagTableReader.Read())
+        {
+            //DEBUUUUUG
+            //Debug.Log("id: "    + tableReader[0].ToString());
+            //Debug.Log("last: "  + tableReader[1].ToString());
+            //Debug.Log("first: " + tableReader[2].ToString());
+            //Debug.Log("town: "  + tableReader[3].ToString());
+
+            tmp = tagTableReader[0].ToString() + "   " +
+                tagTableReader[1].ToString() + "   " +
+                tagTableReader[2].ToString();
+
+            tagText.text = tagText.text + "\n" + tmp;
+        }
+
     }
 
     //dont need to request individual items at the moment
