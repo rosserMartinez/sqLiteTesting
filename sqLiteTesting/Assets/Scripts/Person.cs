@@ -8,19 +8,21 @@ public class Person
     public string lastName;
     public string firstName;
     public string homeTown;
+    public string occupation;
 
     public List<string> tags;
 
-    public Person(string id, string last, string first, string town)
+    public Person(string id, string last, string first, string town, string job, List<string> newTags)
     {
         //set values
         personID = id;
         lastName = last;
         firstName = first;
         homeTown = town;
+        occupation = job;
 
-        //initialize tags here
-        //come back to this, get base functionality first
+        //copy tmp tags to person tags
+        tags = new List<string>(newTags);
     }
 
     // Start is called before the first frame update

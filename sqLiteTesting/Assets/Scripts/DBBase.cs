@@ -82,7 +82,7 @@ public class DBBase : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Start()
     {
-        Debug.Log(Application.persistentDataPath);
+        //Debug.Log(Application.persistentDataPath);
 
         connectionString = "URI=file:" + Application.persistentDataPath + "/Data/" + name + ".db";
         //open connection
