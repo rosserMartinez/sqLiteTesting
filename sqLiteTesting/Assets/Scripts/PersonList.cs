@@ -11,37 +11,34 @@ using System.IO;
 public class PersonList : DBBase
 {
 
-    public class Person
-    {
-
-        public string personID;
-        public string lastName;
-        public string firstName;
-        public string homeTown;
-
-        public List<string> tags;
-
-        public Person(string id, string last, string first, string town)
-        {
-            //set values
-            personID = id;
-            lastName = last;
-            firstName = first;
-            homeTown = town;
-
-            //initialize tags here
-            //come back to this, get base functionality first
-        }
-
-        ~Person()
-        {
-            //cleanup, if necessary? C# doesnt require iirc
-        }
-    }
+    //public class Person
+    //{
+    //
+    //    public string personID;
+    //    public string lastName;
+    //    public string firstName;
+    //    public string homeTown;
+    //
+    //    public List<string> tags;
+    //
+    //    public Person(string id, string last, string first, string town)
+    //    {
+    //        //set values
+    //        personID = id;
+    //        lastName = last;
+    //        firstName = first;
+    //        homeTown = town;
+    //
+    //        //initialize tags here
+    //        //come back to this, get base functionality first
+    //    }
+    //}
 
     public InputField lastName;
     public InputField firstName;
     public InputField homeTown;
+
+    public Text dbText;
 
     public List<Person> people;
 
@@ -207,12 +204,24 @@ public class PersonList : DBBase
 
         IDataReader tableReader = GetDataFromTable(tableName);
 
+        dbText.text = "";
+
+        string tmp;
+
         while (tableReader.Read())
         {
-            Debug.Log("id: "    + tableReader[0].ToString());
-            Debug.Log("last: "  + tableReader[1].ToString());
-            Debug.Log("first: " + tableReader[2].ToString());
-            Debug.Log("town: "  + tableReader[3].ToString());
+            //DEBUUUUUG
+            //Debug.Log("id: "    + tableReader[0].ToString());
+            //Debug.Log("last: "  + tableReader[1].ToString());
+            //Debug.Log("first: " + tableReader[2].ToString());
+            //Debug.Log("town: "  + tableReader[3].ToString());
+
+            tmp = tableReader[0].ToString() + "   " +
+                tableReader[1].ToString() + "   " +
+                tableReader[2].ToString() + "   " +
+                tableReader[3].ToString() + "   ";
+
+            dbText.text = dbText.text + "\n" + tmp;
         }
     }
 
