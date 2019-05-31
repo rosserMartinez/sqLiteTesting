@@ -50,8 +50,8 @@ public class PersonList : DBBase
     private const string peopleKeyPersonID = "Person_ID";
     private const string peopleKeyLastName = "Last_Name";
     private const string peopleKeyFirstName = "First_Name";
-    private const string peopleKeyOccupation = "Occupation";
     private const string peopleKeyTown = "HomeTown";
+    private const string peopleKeyOccupation = "Occupation";
     //just so you remember how its sorted on the database side! (provided the table is complex at all)
     private string[] peopleColumns = new string[] { peopleKeyPersonID, peopleKeyLastName, peopleKeyFirstName, peopleKeyTown, peopleKeyOccupation };
 
@@ -107,7 +107,7 @@ public class PersonList : DBBase
         IDbCommand createPeopleCmd = CreateDBCommand();
 
         createPeopleCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + peopleTableName
-            + " ( " + peopleKeyPersonID + "TEXT PRIMARY KEY, "
+            + " ( " + peopleKeyPersonID + " TEXT PRIMARY KEY, "
             + peopleKeyLastName + " TEXT, "
             + peopleKeyFirstName + " TEXT, "
             + peopleKeyTown + " TEXT, "
@@ -128,7 +128,7 @@ public class PersonList : DBBase
         IDbCommand createTagCmd = CreateDBCommand();
 
         createTagCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + tagTableName
-            + " ( " + tagKeyID + "INTEGER PRIMARY KEY, "
+            + " ( " + tagKeyID + " INTEGER PRIMARY KEY, "
             + tagKeyDesc + " TEXT )";
 
         createTagCmd.ExecuteNonQuery();
@@ -137,8 +137,8 @@ public class PersonList : DBBase
         IDbCommand createPersonTagCmd = CreateDBCommand();
 
         createPersonTagCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + personTagTableName
-            + " ( " + personTagKeyPersonID + "INTEGER PRIMARY KEY, "
-            + personTagKeyTagID + " INTEGER )";
+            + " ( " + personTagKeyPersonID + " TEXT, "
+            + personTagKeyTagID + " TEXT )";
 
         createPersonTagCmd.ExecuteNonQuery();
 
@@ -203,7 +203,7 @@ public class PersonList : DBBase
             + person.personID + "', '"
             + person.lastName + "', '"
             + person.firstName + "', '"
-            + person.firstName + "', '"
+            + person.homeTown + "', '"
             + person.occupation + "' )";
 
         addCmd.ExecuteNonQuery();
@@ -225,7 +225,7 @@ public class PersonList : DBBase
             + person.personID + "', '"
             + person.tags[i] + "' )";
 
-            Debug.Log(person.tags[i]);
+            Debug.Log(addTagCmd.CommandText);
 
             addTagCmd.ExecuteNonQuery();
         }
@@ -296,7 +296,7 @@ public class PersonList : DBBase
 
         dbText.text = "";
 
-        string tmp;
+        string peopleTmp, tagTmp;
 
         while (peopleTableReader.Read())
         {
@@ -306,34 +306,39 @@ public class PersonList : DBBase
             //Debug.Log("first: " + tableReader[2].ToString());
             //Debug.Log("town: "  + tableReader[3].ToString());
 
-            tmp = peopleTableReader[0].ToString() + "   " +
+            peopleTmp = peopleTableReader[0].ToString() + "   " +
                 peopleTableReader[1].ToString() + "   " +
                 peopleTableReader[2].ToString() + "   " +
                 peopleTableReader[3].ToString() + "   ";
                 peopleTableReader[4].ToString();
 
-            dbText.text = dbText.text + "\n" + tmp;
+            dbText.text = dbText.text + "\n" + peopleTmp;
         }
 
-        IDataReader tagTableReader = GetDataFromTable(tagTableName);
-       
-        //read tags
         tagText.text = "";
 
-        while (tagTableReader.Read())
+
+        IDataReader personTagTableReader = GetDataFromTable(personTagTableName);
+       
+        //read tags
+
+        while (personTagTableReader.Read())
         {
             //DEBUUUUUG
-            //Debug.Log("id: "    + tableReader[0].ToString());
-            //Debug.Log("last: "  + tableReader[1].ToString());
-            //Debug.Log("first: " + tableReader[2].ToString());
-            //Debug.Log("town: "  + tableReader[3].ToString());
+            //Debug.Log("id: "    + tagTableReader[0].ToString());
+            //Debug.Log("1: "  + tagTableReader[1].ToString());
+            //Debug.Log("2: " + tagTableReader[2].ToString());
 
-            tmp = tagTableReader[0].ToString() + "   " +
-                tagTableReader[1].ToString() + "   " +
-                tagTableReader[2].ToString();
+            tagTmp = personTagTableReader[0].ToString() + "   " +
+                personTagTableReader[1].ToString();
 
-            tagText.text = tagText.text + "\n" + tmp;
+
+            tagText.text = tagText.text + "\n" + tagTmp;
         }
+
+        Debug.Log(dbText.text);
+        Debug.Log(tagText.text);
+
 
     }
 
