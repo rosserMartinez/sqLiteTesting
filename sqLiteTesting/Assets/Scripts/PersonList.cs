@@ -64,7 +64,7 @@ public class PersonList : DBBase
         Debug.Log("child start");
 
 
-        string connectionString = "URI=file:" + Application.dataPath + "/Data/" + base.name + ".db";
+        string connectionString = "URI=file:" + Application.persistentDataPath + "/Data/" + base.name + ".db";
         //open connection
         base.connection = new SqliteConnection(connectionString);
         base.connection.Open();

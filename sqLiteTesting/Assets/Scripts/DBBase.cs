@@ -82,7 +82,9 @@ public class DBBase : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Start()
     {
-        connectionString = "URI=file:" + Application.dataPath + "/Data/" + name + ".db";
+        Debug.Log(Application.persistentDataPath);
+
+        connectionString = "URI=file:" + Application.persistentDataPath + "/Data/" + name + ".db";
         //open connection
         IDbConnection connection = new SqliteConnection(connectionString);
         connection.Open();
