@@ -301,16 +301,20 @@ public class PersonList : DBBase
         while (peopleTableReader.Read())
         {
             //DEBUUUUUG
-            //Debug.Log("id: "    + tableReader[0].ToString());
-            //Debug.Log("last: "  + tableReader[1].ToString());
-            //Debug.Log("first: " + tableReader[2].ToString());
-            //Debug.Log("town: "  + tableReader[3].ToString());
-
-            peopleTmp = peopleTableReader[0].ToString() + "   " +
+           //Debug.Log("id: "    + peopleTableReader[0].ToString());
+           //Debug.Log("last: "  + peopleTableReader[1].ToString());
+           //Debug.Log("first: " + peopleTableReader[2].ToString());
+           //Debug.Log("town: "  + peopleTableReader[3].ToString());
+           //Debug.Log("occupation: "  + peopleTableReader[4].ToString());
+           //
+            peopleTmp = 
+                peopleTableReader[0].ToString() + "   " +
                 peopleTableReader[1].ToString() + "   " +
                 peopleTableReader[2].ToString() + "   " +
-                peopleTableReader[3].ToString() + "   ";
-                peopleTableReader[4].ToString();
+                peopleTableReader[3].ToString() + "   " +
+                peopleTableReader[4].ToString() + "   ";
+
+           // Debug.Log(peopleTmp);
 
             dbText.text = dbText.text + "\n" + peopleTmp;
         }
