@@ -141,14 +141,14 @@ public class PersonList : DBBase
         IDbCommand addCmd = base.CreateDBCommand();
 
         addCmd.CommandText =
-            "INSERT INFO " + tableName + " ( "
+            "INSERT INTO " + tableName + " ( "
             + tableKeyPersonID + ", "
             + tableKeyLastName + ", "
             + tableKeyFirstName + ", "
             + tableKeyTown + " ) "
 
             + "VALUES ( '"
-            + person.personID
+            + person.personID + "', '"
             + person.lastName + "', '"
             + person.firstName + "', '"
             + person.homeTown + "' )";
