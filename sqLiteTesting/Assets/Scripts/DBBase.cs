@@ -39,6 +39,31 @@ public class DBBase : MonoBehaviour
         return connection.CreateCommand();
     }
 
+    public bool TableExists(string tableName)
+    {
+        IDbCommand checkCmd = CreateDBCommand();
+        checkCmd.CommandText = "SELECT * FROM sqlite_master WHERE type = 'table' AND name = @name";
+
+        IDbDataParameter tableNameParam = checkCmd.CreateParameter(); //dont @ me, this is simpler than casting idbdata param to sqliteparam
+        tableNameParam.ParameterName = "@name";
+        tableNameParam.Value = tableName;
+
+        checkCmd.Parameters.Add(tableNameParam);
+
+        IDataReader dataReader = checkCmd.ExecuteReader();
+
+         if (dataReader.Read())
+         {
+             Debug.Log(tableName + " table already exists");
+             return true;
+         }
+         else
+         {
+             Debug.Log(tableName + " table does not exist");
+             return false;
+         }
+    }
+
     public virtual IDataReader GetDataFromTable(string tableName)
     {
     //    IDbCommand readCmd = connection.CreateCommand();

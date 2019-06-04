@@ -54,22 +54,26 @@ public class PersonList : DBBase
     private const string peopleKeyOccupation = "Occupation";
     //just so you remember how its sorted on the database side! (provided the table is complex at all)
     private string[] peopleColumns = new string[] { peopleKeyPersonID, peopleKeyLastName, peopleKeyFirstName, peopleKeyTown, peopleKeyOccupation };
-
-
-    //dont define these yet since you have the UI to generate them for you, but leave them here when we switch to DB integration
-
+    
     //possible first names
     private const string firstNameTableName = "FirstNames";
+    private const string firstKeyName = "FirstName";
+    //no string layout, single column table
+
     //possible last names
     private const string lastNameTableName = "LastNames";
+    private const string lasatKeyName = "LastName";
+    //no string layout, single column table
+
     //possible hometowns
     private const string homeTownTableName = "HomeTowns";
+    private const string homeKeyName = "HomeTown";
+    //no string layout, single column table
 
     //possible occupations
     private const string occupationTableName = "Occupations";
-    private const string occKeyID = "OccupationID";
     private const string occKeyOccupation = "Occupation";
-    private string[] occColumns = new string[] { occKeyID, occKeyOccupation };
+    //no string layout, single column table
 
     //possible tags
     private const string tagTableName = "Tags";
@@ -115,14 +119,47 @@ public class PersonList : DBBase
 
         createPeopleCmd.ExecuteNonQuery();
 
-        //create occupation table - do this later once you know it works
-        //IDbCommand createOccCmd = CreateDBCommand();
-        //
-        //createOccCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + occupationTableName
-        //    + " ( " + occKeyID + "INTEGER PRIMARY KEY AUTOINCREMENT, "
-        //    + occKeyOccupation + " TEXT )";
-        //
-        //createOccCmd.ExecuteNonQuery();
+        //create single column tables for names, hometowns and occupations
+
+        //first names
+        if (base.TableExists(firstNameTableName))
+        {
+
+        }
+
+        IDbCommand createFirstCmd = CreateDBCommand();
+
+        createFirstCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + firstNameTableName
+            + " ( " + firstKeyName + " TEXT PRIMARY KEY )";
+
+        createFirstCmd.ExecuteNonQuery();
+
+        //last names
+       // IDbCommand createLastCmd = CreateDBCommand();
+       //
+       // createLastCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + lastNameTableName
+       //     + " ( " + lastKeyName + "TEXT PRIMARY KEY )";
+       //
+       // createLastCmd.ExecuteNonQuery();
+       //
+       // //hometowns
+       // IDbCommand createHomeCmd = CreateDBCommand();
+       //
+       // createHomeCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + homeTownTableName
+       //     + " ( " + homeKeyName + "TEXT PRIMARY KEY )";
+       //
+       // createHomeCmd.ExecuteNonQuery();
+       //
+       // //occupations
+       // IDbCommand createOccCmd = CreateDBCommand();
+       //
+       // createOccCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + occupationTableName
+       //     + " ( " + occKeyOccupation + "TEXT PRIMARY KEY )";
+       //
+       // createOccCmd.ExecuteNonQuery();
+
+
+
 
         //create tags table
         IDbCommand createTagCmd = CreateDBCommand();
