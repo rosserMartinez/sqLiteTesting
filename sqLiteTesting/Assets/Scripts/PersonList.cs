@@ -58,6 +58,7 @@ public class PersonList : DBBase
     //possible first names
     private const string firstNameTableName = "FirstNames";
     private const string firstKeyName = "FirstName";
+
     //no string layout, single column table
 
     //possible last names
@@ -120,19 +121,46 @@ public class PersonList : DBBase
         createPeopleCmd.ExecuteNonQuery();
 
         //create single column tables for names, hometowns and occupations
+        //check if each table exists already, and if not, create and populate with default values from ConstructorValues.cs
 
         //first names
-        if (base.TableExists(firstNameTableName))
+        if (base.TableExists(firstNameTableName) == false)
         {
+
+            //create table
+            IDbCommand createFirstCmd = CreateDBCommand();
+
+            createFirstCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + firstNameTableName
+                + " ( " + firstKeyName + " TEXT PRIMARY KEY )";
+
+            createFirstCmd.ExecuteNonQuery();
+
+            //populate table with default values
+            //using same command but overwriting command text
+
+           //int nameListSize = ConstructorValues.MPNames2017Girls.Count + ConstructorValues.MPNames2017Boys.Count;
+           //string nameToAdd;
+           //
+           //for (int i = 0; i < nameListSize; ++i)
+           //{
+           //    if (nameToAdd )
+           //    {
+           //
+           //    }
+           //
+           //    createFirstCmd.CommandText =
+           //    "INSERT INTO " + firstNameTableName + " ( "
+           //    + firstKeyName + ", "
+           //
+           //    + "VALUES ( '"
+           //    
+           //    + "' )";
+           //
+           //    createFirstCmd.ExecuteNonQuery();
+           //}
 
         }
 
-        IDbCommand createFirstCmd = CreateDBCommand();
-
-        createFirstCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + firstNameTableName
-            + " ( " + firstKeyName + " TEXT PRIMARY KEY )";
-
-        createFirstCmd.ExecuteNonQuery();
 
         //last names
        // IDbCommand createLastCmd = CreateDBCommand();
