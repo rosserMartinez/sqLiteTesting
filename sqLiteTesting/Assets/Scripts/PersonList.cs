@@ -138,26 +138,30 @@ public class PersonList : DBBase
             //populate table with default values
             //using same command but overwriting command text
 
-           //int nameListSize = ConstructorValues.MPNames2017Girls.Count + ConstructorValues.MPNames2017Boys.Count;
-           //string nameToAdd;
-           //
-           //for (int i = 0; i < nameListSize; ++i)
-           //{
-           //    if (nameToAdd )
-           //    {
-           //
-           //    }
-           //
-           //    createFirstCmd.CommandText =
-           //    "INSERT INTO " + firstNameTableName + " ( "
-           //    + firstKeyName + ", "
-           //
-           //    + "VALUES ( '"
-           //    
-           //    + "' )";
-           //
-           //    createFirstCmd.ExecuteNonQuery();
-           //}
+           int nameListLength = ConstructorValues.MPNames2017Girls.Length + ConstructorValues.MPNames2017Boys.Length;
+            int girlsListLength = ConstructorValeus.MPNames2017Girls.Length;
+
+           string nameToAdd;
+           
+           for (int i = 0; i < nameListLength; ++i)
+           {
+               if (i < girlsListLength)
+               {
+                    nameToAdd = ConstructorValues.MPNames2017Girls[i];
+               }
+               else
+                    nameToAdd = ConstructorValues.MPNames2017Boys[i - girlsListLength];
+
+                createFirstCmd.CommandText =
+               "INSERT INTO " + firstNameTableName + " ( "
+               + firstKeyName + " ) "
+           
+               + "VALUES ( '"
+               + nameToAdd
+               + "' )";
+           
+               createFirstCmd.ExecuteNonQuery();
+           }
 
         }
 
